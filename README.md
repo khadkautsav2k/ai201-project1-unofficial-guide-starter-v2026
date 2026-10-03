@@ -144,9 +144,9 @@ untested where it matters most.
 
      Milestone 5. -->
 
-**1.**
+**1.** I asked Claude to change my chunker so the post title is copied onto every chunk, not just the first one, because second chunks like housing_morrow_house.txt#1 never named Morrow House. It gave me a new loop for `split_documents`. When I pasted it in, I dropped `return chunks` at the wrong indentation, inside the `for doc` loop. Running `python chunker.py` printed "1 chunks, 300 characters" instead of 143, and my searches for the Verrill and Morrow chunks printed nothing. I moved `return chunks` out of the loop, re-ran `python chunker.py` (143 chunks, 206 characters on average), re-indexed, and confirmed the #1 chunks now start with their titles.
 
-**2.**
+**2.** The library answer cited four files, three of them housing-noise posts, so I asked Claude how to stop the model over-citing. It suggested adding "cite only the file or files that actually contain the fact you used" to `GROUNDING_INSTRUCTION` in `generate.py`. I added it and the answer didn't change. Claude had told me those files probably didn't back the claim, but I grepped the corpus and found each noise post contains "the library is open until 2am during term," so the citations were correct. The real cause was a sentence repeated across the corpus. I kept the added wording and wrote the finding in my README instead of treating it as a model failure.
 
 <!-- ── Stretch features ─────────────────────────────────────────────────────
      Doing one? Say so here BEFORE you start. A feature this README never
