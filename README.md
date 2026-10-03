@@ -99,27 +99,39 @@ The bad: known damp problem on the ground floor; two rooms were taken offline in
 <!-- One complete question and answer, pasted as text, with the source line
      visible. Milestone 4. -->
 
-**Question:**
+**Question:** How much does laundry cost at Innisfree Hall?
 
 **Answer:**
 
 ```
+Laundry at Innisfree Hall costs $1.75 for a wash and $1.75 for a dry.
+
+Sources: `housing_innisfree_hall.txt` and `housing_innisfree_hall_laundry.txt`
 ```
 
-**My relevance cutoff:**
+**My relevance cutoff:** 0.6 (the starter's default, kept)
 
-<!-- The number you set in config.py, and how you got there.
-
-     You ran five questions your corpus covers and the five in OUT_OF_SCOPE
-     that it clearly doesn't, and wrote down the best distance for each. What
-     did those two groups look like? Where was the gap? Put the actual numbers
-     here — the table below wants all ten rows.
-
-     Milestone 4. -->
+In-corpus questions had best distances of 0.145 to 0.346; out-of-scope
+questions had 0.825 to 0.923. 0.6 sits in the middle of that gap, so it
+refuses all five out-of-scope questions and answers all five in-corpus ones.
+Risk: questions loosely related to campus life land between 0.55 and 0.75
+(a Saturday-activities question scored 0.597 earlier), so the cutoff is
+untested where it matters most.
 
 | Question | In corpus? | Best distance |
 |---|---|---|
-|  |  |  |
+| What time does the library close during term? | Yes | 0.258 |
+| What is the peak wait time at Pellew Dining Hall? | Yes | 0.152 |
+| How much does laundry cost at Innisfree Hall? | Yes | 0.145 |
+| When do student parking permits go on sale? | Yes | 0.346 |
+| How many hours a week should I expect for BIOL 160? | Yes | 0.280 |
+| What is the capital of Mongolia? | No | 0.825 |
+| How do I change the oil in a diesel engine? | No | 0.923 |
+| Who won the 1994 World Cup? | No | 0.886 |
+| What is the recommended dosage of ibuprofen for a headache? | No | 0.848 |
+| How do I write a for loop in Rust? | No | 0.877 |
+
+**Grounding check:** The library answer cited four files (study_library_hours.txt plus three housing-noise posts). I suspected over-citation and added "cite only the file or files that actually contain the fact you used" to GROUNDING_INSTRUCTION in generate.py. The answer didn't change. I then grepped the corpus and found that each of those noise posts contains the sentence "the library is open until 2am during term" (line 5), so the citations were accurate. The cause is duplication in the corpus, not model drift. I kept the added wording.
 
 ## How I Used AI
 
