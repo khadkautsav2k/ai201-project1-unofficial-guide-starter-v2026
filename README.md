@@ -21,26 +21,23 @@
 
 ## What This Does
 
-<!-- Three or four sentences. Which corpus you picked, and the kinds of
-     questions your system answers. Write it for someone who has never seen
-     this repo.
-
-     Milestone 5. -->
+This project answers questions about campus life at one university, using 88 short student-written posts as its only source. You can ask things like "What is the laundry cost at Innisfree Hall?" or "Can I still add a course in week two?" and it finds the most relevant posts, hands them to Gemini, and returns an answer with the source file named. If the posts don't cover the question, it says it doesn't have enough information.
 
 ## Chunking Strategy
+**Chunk size:** No fixed size. Chunks are paragraphs, with any paragraph
+under 100 characters merged into the next one. Result: 88 documents became
+143 chunks, 206 characters on average (shortest 117, longest 409).
 
-**Chunk size:**
-**Overlap:**
+**Overlap:** None. Chunks split at blank lines, so no sentence is cut in half
+and there is nothing to overlap.
 
-<!-- What about YOUR documents made you pick these numbers? Short posts and
-     long sectioned guides don't want the same chunking, and "800 seemed
-     reasonable" earns nothing. Point at something you noticed when you read
-     the documents in Milestone 1.
-
-     If you changed your mind partway through, say so and say why. That's worth
-     more than pretending you got it right first time.
-
-     Milestone 3. -->
+Posts in campus_life are short (about 317 characters, 1-3 paragraphs) and the
+useful fact usually sits in one sentence, so fixed-size windows would add
+little. I split at paragraph breaks instead, so each chunk covers about one
+topic (spot check: 1, 2, 2, 1, 2 topics per chunk, 5 of 5 under 3). I changed
+my mind partway: first I put the title only on the first chunk, but second
+chunks like housing_morrow_house.txt#1 never named Morrow House, so I now
+prefix the title on every chunk. Function: chunker.py::split_documents.
 
 ## Sample Chunks
 
@@ -53,29 +50,48 @@
 
      Milestone 3. -->
 
-**Chunk 1** — source: `` — produced by: ``
+**Chunk 1** — source: `admin_add_drop_deadline.txt#0` — produced by: `chunker.py::split_documents`
 
 ```
+On the add/drop deadline
+
+You can add a course through the end of the second week. Dropping is a longer window — through the end of week six — but a drop after week two shows as a W on your transcript. Nothing anywhere on the registrar's site says this plainly, and students find out from each other.
 ```
 
-**Chunk 2** — source: `` — produced by: ``
+**Chunk 2** — source: `course_cs_340.txt#0` — produced by: `chunker.py::split_documents`
 
 ```
+CS 340 Databases
+
+I'm a junior and I've done this twice now. Format is lecture twice a week plus a project that runs the whole term. Assessment: one midterm and a final, both open-book. Lightly curved, usually two or three points.
 ```
 
-**Chunk 3** — source: `` — produced by: ``
+**Chunk 3** — source: `course_phys_130_exams.txt#0` — produced by: `chunker.py::split_documents`
 
 ```
+PHYS 130 Mechanics — assessment
+
+Three midterms, no final, plus a lab practical. Not curved, but the lowest midterm is dropped.
+
+The lab practical is worth 20% and almost nobody prepares for it.
 ```
 
-**Chunk 4** — source: `` — produced by: ``
+**Chunk 4** — source: `dining_verrill_street_grill_followup.txt#1` — produced by: `chunker.py::split_documents`
 
 ```
+Re: Verrill Street Grill
+
+Also worth saying: one register, so the queue is a single line no matter how busy. Nobody tells you this at orientation.
 ```
 
-**Chunk 5** — source: `` — produced by: ``
+**Chunk 5** — source: `housing_morrow_house.txt#1` — produced by: `chunker.py::split_documents`
 
 ```
+Morrow House — what it's actually like
+
+The good: cheapest housing tier by about $900 a year, and the singles are real singles.
+
+The bad: known damp problem on the ground floor; two rooms were taken offline in 2024.
 ```
 
 ## Sample Answer

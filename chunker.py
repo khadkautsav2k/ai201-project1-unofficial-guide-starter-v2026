@@ -79,26 +79,51 @@ def fallback_split(
 
     return chunks
 
-
+#Split the post at blank lines.
+#Walk though the paragraphs, gluing short ones onto the next until a piece reaches 100 characters.
+#If a leftover short piece remains at the end, tack it onto the last chunk 
+#Build chunk objects
 def split_documents(documents: list[Document]) -> list[Chunk]:
     """
-    Split documents into chunks. ⚠️ REPLACE THE BODY OF THIS IN MILESTONE 3.
-
-    Right now it just calls the fallback. That is the plain, generic behaviour
-    the brief is talking about.
-
-    When you write your own strategy, set `produced_by` to
-    "chunker.py::split_documents" so your README's Sample Chunks section names
-    the right function. `app.py chunks` prints that string for you.
-
-    Things worth thinking about before you write any code:
-      - Are your documents short posts or long guides?
-      - Is the useful information in one sentence, or spread over a paragraph?
-      - Would splitting on paragraph breaks keep more thoughts intact than
-        splitting on a character count?
+    Split each document at blank lines (paragraph breaks). Paragraphs shorter
+    than MIN_CHARS are merged with the following paragraph so no chunk is a
+    bare title or fragment. The title is prefixed to every chunk.
     """
-    return fallback_split(documents)
+    MIN_CHARS = 100
 
+    chunks: list[Chunk] = []
+    for doc in documents:
+        paragraphs = [p.strip() for p in doc.text.split("\n\n") if p.strip()]
+
+        pieces: list[str] = []
+        buffer = ""
+        for para in paragraphs:
+            buffer = f"{buffer}\n\n{para}".strip() if buffer else para
+            if len(buffer) >= MIN_CHARS:
+                pieces.append(buffer)
+                buffer = ""
+        if buffer:
+            if pieces:
+                pieces[-1] = f"{pieces[-1]}\n\n{buffer}"
+            else:
+                pieces.append(buffer)
+
+        # The title is the first paragraph, if it's short enough to be a title.
+        title = paragraphs[0] if paragraphs and len(paragraphs[0]) < MIN_CHARS else ""
+
+        for index, text in enumerate(pieces):
+            # Chunk 0 already starts with the title; later chunks need it added.
+            if index > 0 and title:
+                text = f"{title}\n\n{text}"
+            chunks.append(
+                Chunk(
+                    text=text,
+                    source=doc.source,
+                    index=index,
+                    produced_by="chunker.py::split_documents",
+                )
+            )
+    return chunks
 
 def describe(chunks: list[Chunk]) -> str:
     """A one-line summary, printed after indexing."""

@@ -54,7 +54,7 @@ At least 4 of 5 sampled chunks cover no more than 3 topics.
 A new topic starts when the chunk changes subject — e.g. from the building's bathrooms to its laundry costs.
 
 **Why this target:**
-I ran  python app.py chunks -n 5 on campus_life and counted topics on each chunk and found 2,2,1,3,5. The 5-topic chunk(Innisfree Hall) mixed building history,bathrooms, air conditioning, laundry cost, and noise bothered me because a question about laundry would pull in four unrealted things. I chose 3 because it's the smallest limit that lets the four normal chunks pass while catching the Innisfree chunk.
+I ran  python app.py chunks -n 5 on campus_life and counted topics on each chunk and found 2,2,1,3,5. The 5-topic chunk(Innisfree Hall) mixed building history,bathrooms, air conditioning, laundry cost, and noise bothered me because a question about laundry would pull in four unrealted things. I chose 3 because it's the smallest limit that lets the four normal chunks pass while catching the Innisfree Hall chunk.
 
 ---
 
